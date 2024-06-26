@@ -32,34 +32,24 @@ import sys
 def analyze_sporetraps(filename):
     """Total the counts for each position and write the results to an output file."""
     release = os.path.basename(os.path.dirname(filename))
-    trap = os.path.basename(filename).split("_")[1]
+    trap = os.path.basename(filename).split(".")[0]
     trap_results = csv_handler(filename)
-    # make sure each trap has the correct number of images, 12 or 15 depending on release
+    # make sure each trap has the correct number of images, 135 for each sticky trap
     image_count = len(trap_results)
-    if image_count % 3 != 0:
+    if image_count != 135:
         sys.exit(f"ERROR: {release}: Trap {trap} contains {image_count} images.")
     # Output data and file headers
-    sporetrap_data = []
+    sporetrap_data = [trap]
     headers = [
         "Trap",
-        "Position",
         "Microspheres (G)",
         "Microspheres (R)",
         "Notes",
     ]
-    # Combine counts for each position
-    image, position = 1, 1
-    # 4 position traps start at position 2
-    if image_count == 12:
-        position = 2
     counted = 0
     for result in trap_results:
         counted += result
-        if image % 3 == 0:
-            sporetrap_data.append([trap, position, counted])
-            counted = 0
-            position += 1
-        image += 1
+    sporetrap_data.append(counted)
     # Write the results to the output file
     outfile = f"results/{release}.csv"
     write_headers = True
@@ -74,8 +64,7 @@ def analyze_sporetraps(filename):
         csv_writer = csv.writer(csv_outfile)
         if write_headers:
             csv_writer.writerow(headers)
-        for row in sporetrap_data:
-            csv_writer.writerow(row)
+        csv_writer.writerow(sporetrap_data)
 
 
 # handle csv datasets
@@ -107,9 +96,7 @@ def csv_handler(filename):
 # Filter out bad ROIs | Start here: 1 pixel = 7.84 um^2
 def is_artifact(row):
     """Returns true if the ROI should not be counted."""
-    return float(row["Area"]) <= 7.84 * 8 or (
-        not 75 <= float(row["Y"]) <= 2175 and not 3575 <= float(row["Y"]) <= 5575
-    )
+    return float(row["Area"]) <= 7.84 * 8
 
 
 def main(filename):

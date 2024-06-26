@@ -62,19 +62,15 @@ def batch_process(image_folder):
                 os.listdir(current_release),
                 key=lambda x: int(x[1:]),
             ):
-                current_trap = os.path.join(
-                    current_release, f"{trap_name}/{trap_name}_N0000"
-                )
+                current_trap = os.path.join(current_release, trap_name)
                 # Clean out unnecessary extraneous files
                 for file in os.listdir(current_trap):
                     if not (file.startswith("Tile0") and file.endswith(".tif")):
                         os.remove(f"{current_trap}/{file}")
                 # Check if the album has already been processed
-                if os.path.exists(
-                    f"sporetraps/images/{release_name}/{trap_name}_N0000.tif"
-                ):
+                if os.path.exists(f"sporetraps/images/{release_name}/{trap_name}.tif"):
                     if os.path.exists(
-                        f"sporetraps/results/{release_name}/Results_{trap_name}_N0000.csv"
+                        f"sporetraps/results/{release_name}/{trap_name}.csv"
                     ):
                         print(f"Skipping folder: {current_trap}, already processed.")
                         continue
@@ -95,21 +91,21 @@ def batch_process(image_folder):
                     print(f"Error executing the macro: {exception}")
 
                 # Relocate output files into their respective release folders
-                if os.path.exists(f"sporetraps/images/{trap_name}_N0000.tif"):
+                if os.path.exists(f"sporetraps/images/{trap_name}.tif"):
                     os.rename(
-                        f"sporetraps/images/{trap_name}_N0000.tif",
-                        f"sporetraps/images/{release_name}/{trap_name}_N0000.tif",
+                        f"sporetraps/images/{trap_name}.tif",
+                        f"sporetraps/images/{release_name}/{trap_name}.tif",
                     )
-                if os.path.exists(f"sporetraps/results/Results_{trap_name}_N0000.csv"):
+                if os.path.exists(f"sporetraps/results/{trap_name}.csv"):
                     os.rename(
-                        f"sporetraps/results/Results_{trap_name}_N0000.csv",
-                        f"sporetraps/results/{release_name}/Results_{trap_name}_N0000.csv",
+                        f"sporetraps/results/{trap_name}.csv",
+                        f"sporetraps/results/{release_name}/{trap_name}.csv",
                     )
 
             # Process the ImageJ results
             for file in sorted(
                 os.listdir(f"sporetraps/results/{release_name}"),
-                key=lambda x: int(x.split("_")[1][1:]),
+                key=lambda x: int(x.split(".")[0][1:]),
             ):
                 if file.endswith(".csv"):
                     analyze_sporetraps.main(f"sporetraps/results/{release_name}/{file}")
@@ -118,7 +114,7 @@ def batch_process(image_folder):
     compile_workbook.main()
 
     # Reformat the workbook
-    format_workbook.main(workbook_file)
+    # format_workbook.main(workbook_file)
 
     # Calculate the elapsed time
     elapsed_time = time.time() - start_time
