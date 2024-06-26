@@ -114,7 +114,7 @@ def batch_process(image_folder):
     compile_workbook.main()
 
     # Reformat the workbook
-    # format_workbook.main(workbook_file)
+    format_workbook.main(workbook_file)
 
     # Calculate the elapsed time
     elapsed_time = time.time() - start_time

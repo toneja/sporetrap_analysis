@@ -28,29 +28,6 @@ import openpyxl
 from openpyxl.styles import Font, Alignment
 
 
-def add_colors(sheet):
-    """docstring"""
-    # Create a list to map values to font colors
-    value_color_mapping = [
-        "FF0000",  # Red
-        "00FF00",  # Green
-        "0000FF",  # Blue
-        "C0C0C0",  # Silver
-        "FFD700",  # Gold
-    ]
-
-    # Iterate through rows starting from the second row
-    for row in sheet.iter_rows(min_row=2, min_col=2, max_col=2):
-        for cell in row:
-            # Change the font color based on the value
-            cell_value = int(cell.value)
-            font_color = value_color_mapping[cell_value - 1]
-            cell.font = Font(color=font_color)
-            # Use actual heights instead of relative positions
-            positions = [0, 0.5, 1.0, 1.5, 3.0]
-            cell.value = positions[cell_value - 1]
-
-
 def add_manual_counts(counts_file, sheet):
     """docstring"""
     # Load up the counts
@@ -137,9 +114,6 @@ def format_workbook(filename):
 
         # Auto-size columns to fit content
         autosize_columns(sheet)
-
-        # Add colors to the position column
-        add_colors(sheet)
 
     # Save the modified workbook in-place
     workbook.save(filename)
