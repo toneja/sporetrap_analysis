@@ -40,14 +40,10 @@ def add_manual_counts(counts_file, sheet):
     # Iterate through rows
     for row in sheet.iter_rows(min_row=2, min_col=1, max_col=2):
         trap_value = row[0].value
-        position_value = str(row[1].value)
         # Add notations if available
         for match_data in matching_values:
-            if (
-                match_data["Trap"] == trap_value
-                and match_data["Position"] == position_value
-            ):
-                sheet.cell(row=row[0].row, column=4, value=match_data["Microspheres"])
+            if match_data["Trap"] == trap_value:
+                sheet.cell(row=row[0].row, column=3, value=match_data["Microspheres"])
 
 
 def add_notations(notes_file, sheet):
@@ -62,15 +58,11 @@ def add_notations(notes_file, sheet):
     # Iterate through rows
     for row in sheet.iter_rows(min_row=2, min_col=1, max_col=2):
         trap_value = row[0].value
-        position_value = str(row[1].value)
         # Add notations if available
         for match_data in matching_values:
-            if (
-                match_data["Trap"] == trap_value
-                and match_data["Position"] == position_value
-            ):
+            if match_data["Trap"] == trap_value:
                 sheet.cell(
-                    row=row[0].row, column=5, value=match_data["Notes"]
+                    row=row[0].row, column=4, value=match_data["Notes"]
                 ).alignment = Alignment(wrap_text=True)
 
 
