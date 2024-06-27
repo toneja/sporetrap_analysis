@@ -2,7 +2,7 @@
 #
 # This file is part of the sporetrap analysis scripts.
 #
-# Copyright (c) 2023 Jason Toney
+# Copyright (c) 2024 Jason Toney
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 """
-    docstring
+    This script formats the sporetrap workbook with additional information.
+    Adds manual microsphere counts and notations and autosizes columns.
 """
 
 import csv
@@ -29,7 +30,7 @@ from openpyxl.styles import Font, Alignment
 
 
 def add_manual_counts(counts_file, sheet):
-    """docstring"""
+    """Read manual counts from csv file and write them to the spreadsheet."""
     # Load up the counts
     matching_values = []
     with open(counts_file, "r", encoding="utf-8", newline="") as csvfile:
@@ -47,7 +48,7 @@ def add_manual_counts(counts_file, sheet):
 
 
 def add_notations(notes_file, sheet):
-    """docstring"""
+    """Read notations from csv file and write them to the spreadsheet."""
     # Load up the notations
     matching_values = []
     with open(notes_file, "r", encoding="utf-8", newline="") as csvfile:
@@ -67,7 +68,7 @@ def add_notations(notes_file, sheet):
 
 
 def autosize_columns(sheet):
-    """docstring"""
+    """Automatically resize spreadsheet columns to fully fit the text."""
     for column in sheet.columns:
         max_length = 0
         column_letter = openpyxl.utils.get_column_letter(
@@ -84,7 +85,7 @@ def autosize_columns(sheet):
 
 
 def format_workbook(filename):
-    """docstring"""
+    """Format the workbook with additional information."""
     # Load the Excel file
     workbook = openpyxl.load_workbook(filename)
 

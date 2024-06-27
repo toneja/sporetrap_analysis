@@ -2,7 +2,7 @@
 #
 # This file is part of the sporetrap analysis scripts.
 #
-# Copyright (c) 2023 Jason Toney
+# Copyright (c) 2024 Jason Toney
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ import os
 import sys
 
 
-# 3 images = 1 position in a trap, 4-5 positions per trap
+# 135 images = 1 full sticky trap
 def analyze_sporetraps(filename):
-    """Total the counts for each position and write the results to an output file."""
+    """Total the counts for each sticky trap and write the results to an output file."""
     release = os.path.basename(os.path.dirname(filename))
     trap = os.path.basename(filename).split(".")[0]
     trap_results = csv_handler(filename)
