@@ -19,7 +19,7 @@
 
 """
     This script formats the sporetrap workbook with additional information.
-    Adds manual microsphere counts and notations and autosizes columns.
+    Adds notations and autosizes columns.
 """
 
 import csv
@@ -27,24 +27,6 @@ import os
 import sys
 import openpyxl
 from openpyxl.styles import Font, Alignment
-
-
-def add_manual_counts(counts_file, sheet):
-    """Read manual counts from csv file and write them to the spreadsheet."""
-    # Load up the counts
-    matching_values = []
-    with open(counts_file, "r", encoding="utf-8", newline="") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            matching_values.append(row)
-
-    # Iterate through rows
-    for row in sheet.iter_rows(min_row=2, min_col=1, max_col=2):
-        trap_value = row[0].value
-        # Add notations if available
-        for match_data in matching_values:
-            if match_data["Trap"] == trap_value:
-                sheet.cell(row=row[0].row, column=3, value=match_data["Microspheres"])
 
 
 def add_notations(notes_file, sheet):
@@ -92,12 +74,6 @@ def format_workbook(filename):
     # Iterate through each sheet in the workbook
     for sheet_name in workbook.sheetnames:
         sheet = workbook[sheet_name]
-
-        # Add manually counted microspheres to the workbook
-        counts_file = f"{os.path.dirname(__file__)}/counts/{sheet_name} - Red.csv"
-        if os.path.exists(counts_file):
-            print(f"Adding manually counted microspheres to sheet {sheet_name}")
-            add_manual_counts(counts_file, sheet)
 
         # Add any relevant notations to the workbook
         notes_file = f"{os.path.dirname(__file__)}/notes/{sheet_name}.csv"
