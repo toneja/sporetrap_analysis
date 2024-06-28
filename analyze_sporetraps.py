@@ -93,10 +93,10 @@ def csv_handler(filename):
     return image_data
 
 
-# Filter out bad ROIs | Start here: 1 pixel = 7.84 um^2
+# Filter out bad ROIs | Start here: 1 pixel = 8.067 um^2
 def is_artifact(row):
     """Returns true if the ROI should not be counted."""
-    return float(row["Area"]) <= 7.84 * 8
+    return float(row["Area"]) <= 8.067 * 8
 
 
 def main(filename):
