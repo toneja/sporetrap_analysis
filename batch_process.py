@@ -57,6 +57,10 @@ def batch_process(image_folder):
             os.makedirs(f"sporetraps/images/{release_name}", exist_ok=True)
             os.makedirs(f"sporetraps/results/{release_name}", exist_ok=True)
             current_release = os.path.join(image_folder, release_name)
+            # Clean out problematic files left by the ECHO software
+            for file in os.listdir(current_release):
+                if file.endswith(".sws"):
+                    os.remove(f"{current_release}/{file}")
             # Iterate through the image folders
             for trap_name in sorted(
                 os.listdir(current_release),
