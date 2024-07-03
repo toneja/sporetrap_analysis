@@ -31,13 +31,21 @@ import sys
 # 135 images = 1 full sticky trap
 def analyze_sporetraps(filename):
     """Total the counts for each sticky trap and write the results to an output file."""
-    release = os.path.basename(os.path.dirname(filename))
+    release = " - ".join(os.path.basename(os.path.dirname(filename)).split(" - ")[0:-1])
     trap = os.path.basename(filename).split(".")[0]
-    trap_results = csv_handler(filename)
+    green_results = csv_handler(f"sporetraps/results/{release} - Green/{trap}.csv")
+    red_results = csv_handler(f"sporetraps/results/{release} - Red/{trap}.csv")
     # make sure each trap has the correct number of images, 135 for each sticky trap
-    image_count = len(trap_results)
-    if image_count != 135:
-        sys.exit(f"ERROR: {release}: Trap {trap} contains {image_count} images.")
+    green_images = len(green_results)
+    red_images = len(red_results)
+    if green_images != 135:
+        sys.exit(
+            f"ERROR: {release}: Trap {trap} contains {image_count} images of Green microspheres."
+        )
+    if red_images != 135:
+        sys.exit(
+            f"ERROR: {release}: Trap {trap} contains {image_count} images of Red microspheres."
+        )
     # Output data and file headers
     sporetrap_data = [trap]
     headers = [
@@ -46,10 +54,12 @@ def analyze_sporetraps(filename):
         "Microspheres (R)",
         "Notes",
     ]
-    counted = 0
-    for result in trap_results:
-        counted += result
-    sporetrap_data.append(counted)
+    green_count, red_count = 0, 0
+    for result in green_results:
+        green_count += result
+    for results in red_results:
+        red_count += result
+    sporetrap_data.extend([green_count, red_count])
     # Write the results to the output file
     outfile = f"results/{release}.csv"
     write_headers = True

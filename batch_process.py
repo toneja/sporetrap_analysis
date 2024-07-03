@@ -102,9 +102,12 @@ def batch_process(image_folder):
                         f"sporetraps/results/{release_name}/{trap_name}.csv",
                     )
 
-            # Process the ImageJ results
+    # Process the ImageJ results
+    for folder in os.listdir("sporetraps/results"):
+        # Only directly pass Green results, Red counts will be automatically included if present
+        if "Green" in folder:
             for file in sorted(
-                os.listdir(f"sporetraps/results/{release_name}"),
+                os.listdir(f"sporetraps/results/{folder}"),
                 key=lambda x: int(x.split(".")[0][1:]),
             ):
                 if file.endswith(".csv"):
