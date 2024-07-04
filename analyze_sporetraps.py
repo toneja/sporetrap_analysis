@@ -33,8 +33,12 @@ def analyze_sporetraps(filename):
     """Total the counts for each sticky trap and write the results to an output file."""
     release = " - ".join(os.path.basename(os.path.dirname(filename)).split(" - ")[0:-1])
     trap = os.path.basename(filename).split(".")[0]
-    green_results = csv_handler(f"sporetraps/results/{release} - Green/{trap}.csv")
-    red_results = csv_handler(f"sporetraps/results/{release} - Red/{trap}.csv")
+    green_results = csv_handler(f"ImageJ/sporetraps/results/{release} - Green/{trap}.csv")
+    # Red microsphere counts *may* not be present - if so fill em with zeroes
+    if os.path.exists(f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv"):
+        red_results = csv_handler(f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv")
+    else:
+        red_results = [0] * 135
     # make sure each trap has the correct number of images, 135 for each sticky trap
     green_images = len(green_results)
     red_images = len(red_results)
@@ -57,7 +61,7 @@ def analyze_sporetraps(filename):
     green_count, red_count = 0, 0
     for result in green_results:
         green_count += result
-    for results in red_results:
+    for result in red_results:
         red_count += result
     sporetrap_data.extend([green_count, red_count])
     # Write the results to the output file
@@ -80,7 +84,7 @@ def analyze_sporetraps(filename):
 # handle csv datasets
 def csv_handler(filename):
     """Count the microspheres and drop any bad ROIs."""
-    with open(f"ImageJ/{filename}", "r", encoding="utf-8") as csv_file:
+    with open(filename, "r", encoding="utf-8") as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         image_data = []
         counted = 0
