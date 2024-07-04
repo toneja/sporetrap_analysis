@@ -116,7 +116,9 @@ def batch_process(image_folder):
                 key=lambda x: int(x.split(".")[0][1:]),
             ):
                 if file.endswith(".csv"):
-                    analyze_sporetraps.main(f"ImageJ/sporetraps/results/{folder}/{file}")
+                    analyze_sporetraps.main(
+                        f"ImageJ/sporetraps/results/{folder}/{file}"
+                    )
 
     # Compile the results into a workbook
     compile_workbook.main()

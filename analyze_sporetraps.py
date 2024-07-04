@@ -33,10 +33,14 @@ def analyze_sporetraps(filename):
     """Total the counts for each sticky trap and write the results to an output file."""
     release = " - ".join(os.path.basename(os.path.dirname(filename)).split(" - ")[0:-1])
     trap = os.path.basename(filename).split(".")[0]
-    green_results = csv_handler(f"ImageJ/sporetraps/results/{release} - Green/{trap}.csv")
+    green_results = csv_handler(
+        f"ImageJ/sporetraps/results/{release} - Green/{trap}.csv"
+    )
     # Red microsphere counts *may* not be present - if so fill em with zeroes
     if os.path.exists(f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv"):
-        red_results = csv_handler(f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv")
+        red_results = csv_handler(
+            f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv"
+        )
     else:
         red_results = [0] * 135
     # make sure each trap has the correct number of images, 135 for each sticky trap
