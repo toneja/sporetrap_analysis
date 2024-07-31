@@ -67,6 +67,9 @@ def batch_process(image_folder):
                 key=lambda x: int(x.split(" - ")[0][1:]),
             ):
                 current_trap = os.path.join(current_release, trap_name)
+                # Only process directories
+                if not os.path.isdir(current_trap):
+                    continue
                 # Clean out unnecessary extraneous files
                 for file in os.listdir(current_trap):
                     if not (file.startswith("Tile0") and file.endswith(".tif")):
