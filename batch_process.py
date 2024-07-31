@@ -64,7 +64,7 @@ def batch_process(image_folder):
             # Iterate through the image folders
             for trap_name in sorted(
                 os.listdir(current_release),
-                key=lambda x: int(x[1:]),
+                key=lambda x: int(x.split(" - ")[0][1:]),
             ):
                 current_trap = os.path.join(current_release, trap_name)
                 # Clean out unnecessary extraneous files
@@ -113,7 +113,7 @@ def batch_process(image_folder):
         if "Green" in folder:
             for file in sorted(
                 os.listdir(f"ImageJ/sporetraps/results/{folder}"),
-                key=lambda x: int(x.split(".")[0][1:]),
+                key=lambda x: int(x.split(".")[0].split(" - ")[0][1:]),
             ):
                 if file.endswith(".csv"):
                     analyze_sporetraps.main(
