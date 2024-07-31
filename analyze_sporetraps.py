@@ -48,11 +48,11 @@ def analyze_sporetraps(filename):
     red_images = len(red_results)
     if green_images != 135:
         sys.exit(
-            f"ERROR: {release}: Trap {trap} contains {image_count} images of Green microspheres."
+            f"ERROR: {release}: Trap {trap} contains {green_images} images of Green microspheres."
         )
     if red_images != 135:
         sys.exit(
-            f"ERROR: {release}: Trap {trap} contains {image_count} images of Red microspheres."
+            f"ERROR: {release}: Trap {trap} contains {red_images} images of Red microspheres."
         )
     # Output data and file headers
     sporetrap_data = [trap]
