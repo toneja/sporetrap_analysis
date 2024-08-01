@@ -88,17 +88,23 @@ def analyze_sporetraps(filename):
 # handle csv datasets
 def csv_handler(filename):
     """Count the microspheres and drop any bad ROIs."""
+    color = os.path.dirname(filename).split(" - ")[-1]
+    trap = os.path.basename(filename).split(".")[0]
     with open(filename, "r", encoding="utf-8") as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         image_data = []
         counted = 0
         current_slice = 1
         for row in csv_reader:
+            imagenum = int(row["Slice"])
             # calculate totals for each image
-            if int(row["Slice"]) == current_slice:
+            if imagenum == current_slice:
                 if not is_artifact(row):
                     counted += 1
             else:
+                # Track images that have more than 1 Red microsphere
+                if color == "Red" and counted > 1:
+                    print(f"Trap {trap}: Image {imagenum - 1} has {counted} ROIs.")
                 # hit the next slice, store the count
                 image_data.append(counted)
                 current_slice += 1
