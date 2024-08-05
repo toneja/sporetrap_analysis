@@ -107,7 +107,9 @@ def csv_handler(filename):
             else:
                 # Track images that have more than 1 Red microsphere
                 if color == "Red" and counted > 1:
-                    print(f"Release {release}: Trap {trap}: Image {current_slice} has {counted} ROIs.")
+                    print(
+                        f"Release {release}: Trap {trap}: Image {current_slice} has {counted} ROIs."
+                    )
                     red_microsphere_data.append([release, trap, current_slice, counted])
                 # hit the next slice, store the count
                 image_data.append(counted)
