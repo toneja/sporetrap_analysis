@@ -53,10 +53,13 @@ def batch_process(image_folder):
     for release_name in os.listdir(image_folder):
         if "Release" in release_name:
             os.chdir(f"{os.path.dirname(__file__)}/ImageJ")
+            current_release = os.path.join(image_folder, release_name)
+            # Only process directories
+            if not os.path.isdir(current_release):
+                continue
             # Make release folders
             os.makedirs(f"sporetraps/images/{release_name}", exist_ok=True)
             os.makedirs(f"sporetraps/results/{release_name}", exist_ok=True)
-            current_release = os.path.join(image_folder, release_name)
             # Clean out problematic files left by the ECHO software
             for file in os.listdir(current_release):
                 if file.endswith(".sws"):
@@ -67,9 +70,6 @@ def batch_process(image_folder):
                 key=lambda x: int(x.split(" - ")[0][1:]),
             ):
                 current_trap = os.path.join(current_release, trap_name)
-                # Only process directories
-                if not os.path.isdir(current_trap):
-                    continue
                 # Clean out unnecessary extraneous files
                 for file in os.listdir(current_trap):
                     if not (file.startswith("Tile0") and file.endswith(".tif")):
