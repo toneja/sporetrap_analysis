@@ -121,14 +121,19 @@ def csv_handler(filename):
         # outside of the loop
         image_data.append(counted)
     # Write details of Red microsphere counts to output file
+    outfile = "results/Red Microsphere Tracking.csv"
+    write_headers = True
+    if os.path.exists(outfile):
+        write_headers = False
     with open(
-        "RedMicrosphereTracking.csv",
+        outfile,
         "a",
         newline="",
         encoding="utf-8",
-    ) as outfile:
-        csv_writer = csv.writer(outfile)
-        csv_writer.writerow(red_microsphere_headers)
+    ) as csv_outfile:
+        csv_writer = csv.writer(csv_outfile)
+        if write_headers:
+            csv_writer.writerow(red_microsphere_headers)
         for row in red_microsphere_data:
             csv_writer.writerow(row)
     return image_data
