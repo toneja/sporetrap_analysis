@@ -26,6 +26,7 @@
 import csv
 import os
 import sys
+from math import pi
 
 
 # 135 images = 1 full sticky trap
@@ -102,7 +103,7 @@ def csv_handler(filename):
             imagenum = int(row["Slice"])
             # calculate totals for each image
             if imagenum == current_slice:
-                if not is_artifact(row):
+                if not is_artifact(row, color):
                     counted += 1
             else:
                 # Track images that have more than 1 Red microsphere
@@ -114,7 +115,7 @@ def csv_handler(filename):
                 # hit the next slice, store the count
                 image_data.append(counted)
                 current_slice += 1
-                if is_artifact(row):
+                if is_artifact(row, color):
                     counted = 0
                 else:
                     counted = 1
@@ -140,9 +141,19 @@ def csv_handler(filename):
 
 
 # Filter out bad ROIs | Start here: 1 pixel = 8.067 um^2
-def is_artifact(row):
+def is_artifact(row, color):
     """Returns true if the ROI should not be counted."""
-    return float(row["Area"]) <= 8.067 * 8
+    # TODO: Fix size bounds for Red microspheres, use wide range for now
+    roi_area = float(row["Area"])
+    min_diameter = 10
+    if color == "Green":
+        max_diameter = 50
+    else:
+        max_diameter = 400
+    return (
+        roi_area < pi * (min_diameter / 2) ** 2
+        or roi_area > pi * (max_diameter / 2) ** 2
+    )
 
 
 def main(filename):
