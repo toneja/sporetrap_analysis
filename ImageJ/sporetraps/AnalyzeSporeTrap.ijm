@@ -22,9 +22,6 @@ run("Subtract Background...", "rolling=10 light stack");
 setThreshold(50, 255, "raw");
 setOption("BlackBackground", false);
 run("Convert to Mask", "background=Light");
-run("Fill Holes", "stack");
-// Try to separate blobs into individual chromophores
-run("Watershed", "stack");
 saveAs("tif", "sporetraps/images/" + File.getName(getTitle()));
 
 // Generate ROIs
