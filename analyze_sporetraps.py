@@ -144,16 +144,13 @@ def csv_handler(filename):
 def is_artifact(row, color):
     """Returns true if the ROI should not be counted."""
     # TODO: Fix size bounds for Red microspheres, use wide range for now
-    roi_area = float(row["Area"])
-    min_diameter = 10
+    area = float(row["Area"])
+    min_feret = float(row["MinFeret"])
     if color == "Green":
-        max_diameter = 50
+        min_diameter = 10
     else:
-        max_diameter = 400
-    return (
-        roi_area < pi * (min_diameter / 2) ** 2
-        or roi_area > pi * (max_diameter / 2) ** 2
-    )
+        min_diameter = 150
+    return min_feret < min_diameter or area < pi * (min_feret / 2) ** 2
 
 
 def main(filename):
