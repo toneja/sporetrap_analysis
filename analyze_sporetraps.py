@@ -95,8 +95,6 @@ def csv_handler(filename):
     with open(filename, "r", encoding="utf-8") as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         image_data = []
-        red_microsphere_data = []
-        red_microsphere_headers = ["Release", "Trap", "Image", "Count"]
         counted = 0
         current_slice = 1
         for row in csv_reader:
@@ -106,12 +104,6 @@ def csv_handler(filename):
                 if not is_artifact(row, color):
                     counted += 1
             else:
-                # Track images that have more than 1 Red microsphere
-                if color == "Red" and counted > 1:
-                    print(
-                        f"Release {release}: Trap {trap}: Image {current_slice} has {counted} ROIs."
-                    )
-                    red_microsphere_data.append([release, trap, current_slice, counted])
                 # hit the next slice, store the count
                 image_data.append(counted)
                 current_slice += 1
@@ -121,22 +113,6 @@ def csv_handler(filename):
                     counted = 1
         # outside of the loop
         image_data.append(counted)
-    # Write details of Red microsphere counts to output file
-    outfile = "results/Red Microsphere Tracking.csv"
-    write_headers = True
-    if os.path.exists(outfile):
-        write_headers = False
-    with open(
-        outfile,
-        "a",
-        newline="",
-        encoding="utf-8",
-    ) as csv_outfile:
-        csv_writer = csv.writer(csv_outfile)
-        if write_headers:
-            csv_writer.writerow(red_microsphere_headers)
-        for row in red_microsphere_data:
-            csv_writer.writerow(row)
     return image_data
 
 
