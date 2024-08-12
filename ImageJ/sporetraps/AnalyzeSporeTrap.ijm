@@ -16,10 +16,10 @@ if (bitDepth() > 8) {
 run("Invert LUTs");
 
 // Subtract background from image stack
-run("Subtract Background...", "rolling=10 light stack");
+// run("Subtract Background...", "rolling=10 light stack");
 
 // Generate a binary image from our image stack
-setThreshold(50, 255, "raw");
+setThreshold(90, 255, "raw");
 setOption("BlackBackground", false);
 run("Convert to Mask", "background=Light");
 saveAs("tif", "sporetraps/images/" + File.getName(getTitle()));
