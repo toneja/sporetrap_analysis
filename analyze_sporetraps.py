@@ -121,12 +121,15 @@ def is_artifact(row, color):
     """Returns true if the ROI should not be counted."""
     # TODO: Fix size bounds for Red microspheres, use wide range for now
     area = float(row["Area"])
+    feret = float(row["Feret"])
     min_feret = float(row["MinFeret"])
+    # minimum area = 90% of area of a circle with diameter=min_feret
+    min_area = (pi * (min_feret / 2) ** 2) * 0.9
     if color == "Green":
         min_diameter = 10
     else:
         min_diameter = 150
-    return min_feret < min_diameter or area < pi * (min_feret / 2) ** 2
+    return (feret < min_diameter and min_feret < min_diameter) or area < min_area
 
 
 def main(filename):
