@@ -99,10 +99,14 @@ def csv_handler(filename):
         current_slice = 1
         for row in csv_reader:
             imagenum = int(row["Slice"])
+            feret = float(row["Feret"])
+            min_feret = float(row["MinFeret"])
             # calculate totals for each image
             if imagenum == current_slice:
                 if not is_artifact(row, color):
                     counted += 1
+                    if color == "Red" and (feret > 425 or min_feret > 425):
+                        print(f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}")
             else:
                 # hit the next slice, store the count
                 image_data.append(counted)
@@ -111,6 +115,8 @@ def csv_handler(filename):
                     counted = 0
                 else:
                     counted = 1
+                    if color == "Red" and (feret > 425 or min_feret > 425):
+                        print(f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}")
         # outside of the loop
         image_data.append(counted)
     return image_data
