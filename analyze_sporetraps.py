@@ -106,7 +106,9 @@ def csv_handler(filename):
                 if not is_artifact(row, color):
                     counted += 1
                     if color == "Red" and (feret > 425 or min_feret > 425):
-                        print(f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}")
+                        print(
+                            f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}"
+                        )
             else:
                 # hit the next slice, store the count
                 image_data.append(counted)
@@ -116,7 +118,9 @@ def csv_handler(filename):
                 else:
                     counted = 1
                     if color == "Red" and (feret > 425 or min_feret > 425):
-                        print(f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}")
+                        print(
+                            f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}"
+                        )
         # outside of the loop
         image_data.append(counted)
     return image_data
