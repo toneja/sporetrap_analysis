@@ -129,7 +129,6 @@ def csv_handler(filename):
 # Filter out bad ROIs | Start here: 1 pixel = 8.067 um^2
 def is_artifact(row, color):
     """Returns true if the ROI should not be counted."""
-    # TODO: Fix size bounds for Red microspheres, use wide range for now
     area = float(row["Area"])
     feret = float(row["Feret"])
     min_feret = float(row["MinFeret"])
