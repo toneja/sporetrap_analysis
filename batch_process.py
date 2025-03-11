@@ -75,12 +75,17 @@ def batch_process(image_folder):
                     if not (file.startswith("Tile0") and file.endswith(".tif")):
                         os.remove(f"{current_trap}/{file}")
                 # Check if the album has already been processed
-                if os.path.exists(f"sporetraps/images/{release_name}/{trap_name}.tif"):
-                    if os.path.exists(
-                        f"sporetraps/results/{release_name}/{trap_name}.csv"
-                    ):
+                if os.path.exists(f"sporetraps/images/{release_name}/{trap_name}"):
+                    if os.path.exists(f"sporetraps/results/{release_name}/{trap_name}"):
                         print(f"Skipping folder: {current_trap}, already processed.")
                         continue
+                # Create output directories
+                os.makedirs(
+                    f"sporetraps/images/{release_name}/{trap_name}", exist_ok=True
+                )
+                os.makedirs(
+                    f"sporetraps/results/{release_name}/{trap_name}", exist_ok=True
+                )
                 print(f"Processing folder: {current_trap}")
                 processed += 1
 
@@ -88,7 +93,7 @@ def batch_process(image_folder):
                 command = [
                     "./ImageJ.exe",
                     "-macro",
-                    "sporetraps/AnalyzeSporeTrap.ijm",
+                    "sporetraps/BatchProcess.ijm",
                     current_trap,
                 ]
 
@@ -98,30 +103,31 @@ def batch_process(image_folder):
                     print(f"Error executing the macro: {exception}")
 
                 # Relocate output files into their respective release folders
-                if os.path.exists(f"sporetraps/images/{trap_name}.tif"):
-                    os.rename(
-                        f"sporetraps/images/{trap_name}.tif",
-                        f"sporetraps/images/{release_name}/{trap_name}.tif",
-                    )
-                if os.path.exists(f"sporetraps/results/{trap_name}.csv"):
-                    os.rename(
-                        f"sporetraps/results/{trap_name}.csv",
-                        f"sporetraps/results/{release_name}/{trap_name}.csv",
-                    )
+                for file in os.listdir("sporetraps/images"):
+                    if file.endswith(".tif"):
+                        os.replace(
+                            f"sporetraps/images/{file}",
+                            f"sporetraps/images/{release_name}/{trap_name}/{file}",
+                        )
+                for file in os.listdir("sporetraps/results"):
+                    if file.endswith(".csv"):
+                        os.replace(
+                            f"sporetraps/results/{file}",
+                            f"sporetraps/results/{release_name}/{trap_name}/{file}",
+                        )
 
     # Process the ImageJ results
     os.chdir(os.path.dirname(__file__))
     for folder in os.listdir("ImageJ/sporetraps/results"):
         # Only directly pass Green results, Red counts will be automatically included if present
         if "Green" in folder:
-            for file in sorted(
+            for trap_folder in sorted(
                 os.listdir(f"ImageJ/sporetraps/results/{folder}"),
-                key=lambda x: int(x.split(".")[0].split(" - ")[0][1:]),
+                key=lambda x: int(x.split(" - ")[0][1:]),
             ):
-                if file.endswith(".csv"):
-                    analyze_sporetraps.main(
-                        f"ImageJ/sporetraps/results/{folder}/{file}"
-                    )
+                analyze_sporetraps.main(
+                    f"ImageJ/sporetraps/results/{folder}/{trap_folder}"
+                )
 
     # Compile the results into a workbook
     compile_workbook.main()

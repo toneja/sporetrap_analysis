@@ -30,18 +30,20 @@ from math import pi
 
 
 # 135 images = 1 full sticky trap
-def analyze_sporetraps(filename):
+def analyze_sporetraps(folder):
     """Total the counts for each sticky trap and write the results to an output file."""
-    release = " - ".join(os.path.basename(os.path.dirname(filename)).split(" - ")[0:-1])
-    trap = os.path.basename(filename).split(".")[0]
-    green_results = csv_handler(
-        f"ImageJ/sporetraps/results/{release} - Green/{trap}.csv"
-    )
+    release = " - ".join(os.path.basename(os.path.dirname(folder)).split(" - ")[0:-1])
+    trap = os.path.basename(folder)
+    green_results = [
+        csv_handler(os.path.join(folder, csv_file), "Green")
+        for csv_file in os.listdir(folder)
+    ]
     # Red microsphere counts *may* not be present - if so fill em with zeroes
-    if os.path.exists(f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv"):
-        red_results = csv_handler(
-            f"ImageJ/sporetraps/results/{release} - Red/{trap}.csv"
-        )
+    if os.path.exists(folder.replace("Green", "Red")):
+        red_results = [
+            csv_handler(os.path.join(folder.replace("Green", "Red"), csv_file), "Red")
+            for csv_file in os.listdir(folder.replace("Green", "Red"))
+        ]
     else:
         red_results = [0] * 135
     # make sure each trap has the correct number of images, 135 for each sticky trap
@@ -63,11 +65,8 @@ def analyze_sporetraps(filename):
         "Microspheres (R)",
         "Notes",
     ]
-    green_count, red_count = 0, 0
-    for result in green_results:
-        green_count += result
-    for result in red_results:
-        red_count += result
+    green_count = sum(green_results)
+    red_count = sum(red_results)
     sporetrap_data.extend([green_count, red_count])
     # Write the results to the output file
     outfile = f"results/{release}.csv"
@@ -87,64 +86,38 @@ def analyze_sporetraps(filename):
 
 
 # handle csv datasets
-def csv_handler(filename):
-    """Count the microspheres and drop any bad ROIs."""
-    release = os.path.basename(os.path.dirname(filename))
-    color = release.split(" - ")[-1]
-    trap = os.path.basename(filename).split(".")[0]
+def csv_handler(filename, color):
+    """Count the microspheres and exclude any bad ROIs."""
+    counted = 0
     with open(filename, "r", encoding="utf-8") as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=",")
-        image_data = []
-        counted = 0
-        current_slice = 1
         for row in csv_reader:
-            imagenum = int(row["Slice"])
-            feret = float(row["Feret"])
-            min_feret = float(row["MinFeret"])
-            # calculate totals for each image
-            if imagenum == current_slice:
-                if not is_artifact(row, color):
-                    counted += 1
-                    if color == "Red" and (feret > 425 or min_feret > 425):
-                        print(
-                            f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}"
-                        )
-            else:
-                # hit the next slice, store the count
-                image_data.append(counted)
-                current_slice += 1
-                if is_artifact(row, color):
-                    counted = 0
-                else:
-                    counted = 1
-                    if color == "Red" and (feret > 425 or min_feret > 425):
-                        print(
-                            f"Large Red Microsphere located in Release: {release} Trap: {trap} Image: {imagenum}"
-                        )
-        # outside of the loop
-        image_data.append(counted)
-    return image_data
+            counted += is_particle(row, color)
+    return counted
 
 
 # Filter out bad ROIs | Start here: 1 pixel = 8.067 um^2
-def is_artifact(row, color):
-    """Returns true if the ROI should not be counted."""
+def is_particle(row, color):
+    """Returns true if the ROI should be counted."""
     area = float(row["Area"])
     feret = float(row["Feret"])
     min_feret = float(row["MinFeret"])
+    roundness = float(row["Round"])
     # minimum area = 90% of area of a circle with diameter=min_feret
     min_area = (pi * (min_feret / 2) ** 2) * 0.9
     if color == "Green":
         min_diameter = 10
+        particle = feret >= min_diameter and area >= min_area and roundness >= 0.65
     else:
         min_diameter = 150
-    return (feret < min_diameter and min_feret < min_diameter) or area < min_area
+        particle = feret >= min_diameter
+    return particle
 
 
-def main(filename):
+def main(folder):
     """Execute main objective."""
     os.chdir(os.path.dirname(__file__))
-    analyze_sporetraps(filename)
+    analyze_sporetraps(folder)
 
 
 if __name__ == "__main__":
