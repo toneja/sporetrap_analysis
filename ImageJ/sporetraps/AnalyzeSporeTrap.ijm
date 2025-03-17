@@ -24,7 +24,9 @@ if (particleColor == "Green") {
 setOption("BlackBackground", false);
 run("Convert to Mask", "background=Light");
 run("Fill Holes");
-run("Watershed");
+if (particleColor == "Green") {
+    run("Watershed");
+}
 saveAs("tif", "sporetraps/images/" + File.getName(getTitle()));
 
 // Generate ROIs
