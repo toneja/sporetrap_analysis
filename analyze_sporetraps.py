@@ -89,6 +89,7 @@ def analyze_sporetraps(folder):
 def csv_handler(filename, color):
     """Count the microspheres and exclude any bad ROIs."""
     release = os.path.normpath(filename).split(os.sep)[-3]
+    release_base = " - ".join(release.split(" - ")[0:3])
     trap = os.path.basename(os.path.dirname(filename))
     imagenum = int(os.path.splitext(os.path.basename(filename))[0].split("Tile")[1])
     counted = 0
@@ -97,11 +98,22 @@ def csv_handler(filename, color):
         for row in csv_reader:
             feret = float(row["Feret"])
             min_feret = float(row["MinFeret"])
+            counted += is_particle(row, color)
             if color == "Red" and (feret > 425 or min_feret > 425):
+                write_headers = True
+                if os.path.exists(f"notes/{release_base}.csv"):
+                    write_headers = False
+                with open(
+                    f"notes/{release_base}.csv", "a", newline="", encoding="utf-8"
+                ) as notes_file:
+                    notes_writer = csv.writer(notes_file)
+                    if write_headers:
+                        notes_writer.writerow(["Trap", "Notes"])
+                    notes_writer.writerow([trap, "1 Large Red Microsphere"])
                 print(
                     f"Large Red Microsphere located in Release: {release}, Trap: {trap}, Image: {imagenum}"
                 )
-            counted += is_particle(row, color)
+                counted -= 1
     return counted
 
 
