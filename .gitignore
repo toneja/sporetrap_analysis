@@ -1,5 +1,5 @@
 *.tif
-*.xlsx
+Particle Release Counts*.xlsx
 
 __pycache__/
 ECHO Images/
