@@ -26,7 +26,7 @@ import csv
 import os
 import sys
 import openpyxl
-from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Alignment
 
 
 def add_notations(notes_file, sheet):
@@ -57,11 +57,8 @@ def autosize_columns(sheet):
             column[0].column
         )  # Get column letter
         for cell in column:
-            try:  # Avoid error on empty cells
-                if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
-            except:
-                pass
+            if len(str(cell.value)) > max_length:
+                max_length = len(cell.value)
         adjusted_width = max_length + 2
         sheet.column_dimensions[column_letter].width = adjusted_width
 
