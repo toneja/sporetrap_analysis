@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+"""Scatter plot the microsphere counts: manual counts vs. automated counts"""
+
 import os
 import sys
 import pandas as pd
@@ -38,7 +40,7 @@ def plot_particles(excel_file, color, show_plot=False):
     x = df[f"{color} (manual)"]
     y = df[f"{color} (SW)"]
     # Fit the function to the data and score the fit
-    popt, _ = curve_fit(linear_fx, x, y)
+    popt, _ = curve_fit(linear_fx, x, y)  # pylint: disable=unbalanced-tuple-unpacking
     fitted = linear_fx(x, *popt)
     r2 = round(r2_score(y, fitted), 3)
     # Scatter plot the data
