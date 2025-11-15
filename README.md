@@ -1,6 +1,6 @@
 # sporetrap analysis
 This project is composed of Python scripts and ImageJ macros for use with\
-images taken for the fluorescent microsphere particle release experiment.
+images taken for the Airborne *Xanthomonas* Experiments - Madras (AXE-M).
 
 ## License
 This project is licensed under the GNU General Public License v3.0.
